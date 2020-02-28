@@ -9,16 +9,18 @@ x=3
 echo $x
 
 ## User Input
+echo 'Enter a inputs:'
 read x
-echo $x
+echo "You Entered:$x"
 
 ## Arithmetic
 expr 1 + 1 # operator must be space separated. expr 1+1 wont work.
 expr $x + 1
 ### Interesting (storing the value of expr into a variable) :
-a=`expr $x + 1`
+a=`expr $x + 1` ## notice the ` ` , its not the single quote
 echo $a
 
+echo 'for division or multiplication use \* or \/ as the operator'
 
 ### Conditionals
 echo 'enter a number'
