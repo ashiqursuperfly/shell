@@ -1,0 +1,10 @@
+total 132
+-rw-rw-r-- 1 user user 103333 ফেব   24 20:38 CSE314-Jan-2020_ Shell Script Offline.pdf
+-rw-rw-r-- 1 user user    400 ফেব   27 22:18 debug.log
+-rw-r--r-- 1 user user    203 ফেব   29 04:20 d.sh
+-rw-rw-r-- 1 user user     19 ফেব   29 05:12 input.txt
+-rw-rw-r-- 1 user user    217 ফেব   25 01:05 output.csv
+drwxrwxr-x 2 user user   4096 ফেব   27 22:17 output_dir
+-rw-r--r-- 1 user user   1700 ফেব   29 05:39 script.sh
+drwxrwxr-x 4 user user   4096 ফেব   29 05:22 working_dir
+-rw-r--r-- 1 user user      0 ফেব   29 06:03 xoxo.txt
