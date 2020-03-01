@@ -7,15 +7,29 @@ output_dir="../_output_dir_1605103"
 ## Utils ##
 debug=1
 log(){
-        if [ $debug -eq  1 ] ; then
-                echo $1
+	if [ $debug -eq  1 ] ; then
+		echo $1
 		echo ""
-        fi
+	fi
 }
 
 error(){
-       	echo "ERROR: $1"
+	echo "ERROR: $1"
 	exit
+}
+
+format_file_name(){
+	local_file_name=$1
+	local_search_query=$2
+	local_search_zone=$3
+
+	
+	local_file_name=`tr '/' '.' <<<"$local_file_name"`
+	local_file_name=$(echo $local_file_name | cut -c 2-)
+	local_file_name="$working_dir$local_file_name"
+	#log "format file name : $local_file_name $local_search_query $local_search_zone"
+	
+	ret="$local_file_name"
 }
 
 ## Script ##
@@ -48,7 +62,7 @@ else
 fi
 
 if [ $working_dir != "root" ]; then
-      	cd $working_dir
+	cd $working_dir
 fi
 
 log "working_dir contents"
@@ -68,14 +82,12 @@ log "total files: $n"
 for ((i=0; i<$n; i++))
 do
 	file=`head -1  $temp_file`
-	#log "Searching:"
-        #log "$file"
        
-       	sed -i 1d $temp_file
+	sed -i 1d $temp_file
 
 	if [ $search_zone == $begin ]; then
 		lines=`head -$number_of_lines "$file"`
-	        # log "$lines"
+		# log "$lines"
 
 	elif [ $search_zone == $end ]; then	
 		lines=`tail -$number_of_lines "$file"`
@@ -84,11 +96,19 @@ do
 		error "invalid search_zone $search_zone"
 	fi
 
+	mkdir -p "$output_dir"
+
 	if grep -q -i "$search_query" <<< "$lines"; then
-	        log "Found:" 
+		echo "Found:" 
 		log "$file"
-		mkdir -p "$output_dir"
-                cp "$file" "$output_dir"
+		
+		format_file_name "$file" "$search_query" "$search_zone"
+		
+		log "modified: $ret"
+		cp "$file" "$ret"
+		mv "$ret" $output_dir
+
+
 	fi
 done
 
