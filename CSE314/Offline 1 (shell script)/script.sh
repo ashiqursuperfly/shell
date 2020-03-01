@@ -3,9 +3,11 @@ begin="begin"
 end="end"
 temp_file="_temp"
 output_dir="../_output_dir_1605103"
+csv_file_name="../_output_csv_1605103.csv"
+csv_header="File Path,Line Number,Line Containing Searched String"
 
 ## Utils ##
-debug=1
+debug=0
 log(){
 	if [ $debug -eq  1 ] ; then
 		echo $1
@@ -54,10 +56,10 @@ format_file_name(){
 	log "format file name : $local_file_name $local_search_query $local_search_zone $line_no $local_file_ext $local_ext_length $actual_file_name_length $file_name_without_ext"
 
 	ret="$file_name_without_ext"_"$line_no$local_file_ext"
+	ret2="$line_no"
 }
 
 ## Script ##
-
 error_msg="Please pass atleast one command line arg r: <input_file_name>"
 if [ $# -eq 0 ]; then
 	error "$error_msg"
@@ -92,15 +94,15 @@ fi
 log "working_dir contents"
 log "`ls`"
 
-
 ## TODO : try to list only human readable files
 find ./ -type f -printf '%h/%f\n' > $temp_file 
 n=`wc -l $temp_file | cut -d ' ' -f1`
 
 # cat $temp_file
-
 log "total files: $n"
 
+csv_text=$csv_header
+count_of_files_matching_criteria=0
 for ((i=0; i<$n; i++))
 do
 	file=`head -1  $temp_file`
@@ -114,6 +116,7 @@ do
 	elif [ $search_zone == $end ]; then	
 		lines=`tail -$number_of_lines "$file"`
 		# log "$lines"
+	
 	else
 		error "invalid search_zone $search_zone"
 	fi
@@ -121,59 +124,34 @@ do
 	mkdir -p "$output_dir"
 
 	if grep -q -i "$search_query" <<< "$lines"; then
-		echo "Found:" 
+		log "Found:" 
 		log "$file"
 		
+		count_of_files_matching_criteria=`expr $count_of_files_matching_criteria + 1`
+
+		unmodified_full_path="$working_dir"$(echo $file | cut -c 2-)
+
 		format_file_name "$file" "$search_query" "$search_zone"
 		
-		log "modified: $ret"
+		matched_line=`sed "${line_no}q;d" "$file"`
+
+		new_csv_text=""$unmodified_full_path",$ret2,"$matched_line""
+		
+		log "CSV: $new_csv_text"
+		
+		csv_text="$csv_text\n"
+		csv_text="$csv_text$new_csv_text"
+		
+		#log "modified: $ret $ret2"
 		cp "$file" "$ret"
 		mv "$ret" $output_dir
-
 
 	fi
 done
 
-
 rm $temp_file
+echo "Number of Files Matching Criteria: $count_of_files_matching_criteria"
 
+#echo -e $csv_text
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+printf "$csv_text" > "$csv_file_name"
