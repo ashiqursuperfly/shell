@@ -24,12 +24,21 @@ format_file_name(){
 	local_search_zone=$3
 
 	
+	if [ $local_search_zone == $begin ]; then
+		line_no=`grep "$search_query" -i -n "$local_file_name" | cut -d':' -f1 | head -1`
+	elif [ $local_search_zone == $end ]; then
+		line_no=`grep "$search_query" -i -n "$local_file_name" | cut -d':' -f1 | tail -1`
+	else 
+		error "Invalid Search Zone inside file name formatter"
+	fi		
+
 	local_file_name=`tr '/' '.' <<<"$local_file_name"`
 	local_file_name=$(echo $local_file_name | cut -c 2-)
 	local_file_name="$working_dir$local_file_name"
-	#log "format file name : $local_file_name $local_search_query $local_search_zone"
 	
-	ret="$local_file_name"
+	log "format file name : $local_file_name $local_search_query $local_search_zone $line_no"
+
+	ret="$local_file_name$line_no"
 }
 
 ## Script ##
