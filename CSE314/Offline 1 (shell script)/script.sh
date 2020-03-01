@@ -60,6 +60,8 @@ format_file_name(){
 }
 
 ## Script ##
+
+### TASK 1,2,3:- Handling the command line args
 error_msg="Please pass atleast one command line arg r: <input_file_name>"
 if [ $# -eq 0 ]; then
 	error "$error_msg"
@@ -78,10 +80,11 @@ else
 	error "invalid number of command line args provided"
 fi
 
+### TASK 4:- Reading inputs
 if [ -f $input_file ]; then
-	search_zone=`head -1 input.txt`
-	search_query=`tail -1 input.txt`
-	number_of_lines=`tail -2 input.txt | head -1`
+	search_zone=`head -1 "$input_file"`
+	search_query=`tail -1 "$input_file"`
+	number_of_lines=`tail -2 "$input_file" | head -1`
 	log "inputs: $search_zone $search_query $number_of_lines"
 else
 	error "Please enter a valid file name"
@@ -94,6 +97,7 @@ fi
 log "working_dir contents"
 log "`ls`"
 
+### TASK 5: finding list of regular files
 ## TODO : try to list only human readable files
 find ./ -type f -printf '%h/%f\n' > $temp_file 
 n=`wc -l $temp_file | cut -d ' ' -f1`
@@ -101,6 +105,7 @@ n=`wc -l $temp_file | cut -d ' ' -f1`
 # cat $temp_file
 log "total files: $n"
 
+### TASK 5: Searching from the list of regular files
 csv_text=$csv_header
 count_of_files_matching_criteria=0
 for ((i=0; i<$n; i++))
@@ -130,7 +135,7 @@ do
 		count_of_files_matching_criteria=`expr $count_of_files_matching_criteria + 1`
 
 		unmodified_full_path="$working_dir"$(echo $file | cut -c 2-)
-
+		
 		format_file_name "$file" "$search_query" "$search_zone"
 		
 		matched_line=`sed "${line_no}q;d" "$file"`
@@ -142,7 +147,6 @@ do
 		csv_text="$csv_text\n"
 		csv_text="$csv_text$new_csv_text"
 		
-		#log "modified: $ret $ret2"
 		cp "$file" "$ret"
 		mv "$ret" $output_dir
 
@@ -151,7 +155,5 @@ done
 
 rm $temp_file
 echo "Number of Files Matching Criteria: $count_of_files_matching_criteria"
-
-#echo -e $csv_text
 
 printf "$csv_text" > "$csv_file_name"
