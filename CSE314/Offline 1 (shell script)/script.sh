@@ -23,7 +23,6 @@ format_file_name(){
 	local_search_query=$2
 	local_search_zone=$3
 
-	
 	if [ $local_search_zone == $begin ]; then
 		line_no=`grep "$search_query" -i -n "$local_file_name" | cut -d':' -f1 | head -1`
 	elif [ $local_search_zone == $end ]; then
@@ -31,14 +30,30 @@ format_file_name(){
 	else 
 		error "Invalid Search Zone inside file name formatter"
 	fi		
-
-	local_file_name=`tr '/' '.' <<<"$local_file_name"`
-	local_file_name=$(echo $local_file_name | cut -c 2-)
-	local_file_name="$working_dir$local_file_name"
 	
-	log "format file name : $local_file_name $local_search_query $local_search_zone $line_no"
+	local_file_name=$(echo $local_file_name | cut -c 2-) # remove the '.' from prefix "./"
+	
+	local_file_ext=`echo $local_file_name | rev | cut -d'.' -f 1 | rev` # assuming last . separated value is extension
+	local_ext_length=`echo -n $local_file_ext | wc -m`
+	actual_file_name_length=`echo -n $local_file_name | wc -m`
 
-	ret="$local_file_name$line_no"
+	if [ $local_ext_length -eq $actual_file_name_length ]; then
+		log "No Extension for file $local_file_name"
+		file_name_without_ext=$local_file_name
+		local_file_ext=""
+	else
+		local_ext_length=`expr $local_ext_length + 2`	
+		file_name_without_ext=`echo $local_file_name | rev | cut -c "$local_ext_length"- | rev ` 
+		local_file_ext=".$local_file_ext"	
+	fi
+
+
+	file_name_without_ext=`tr '/' '.' <<<"$file_name_without_ext"` # replace all '/' by '.'" 
+	file_name_without_ext="$working_dir$file_name_without_ext"
+	
+	log "format file name : $local_file_name $local_search_query $local_search_zone $line_no $local_file_ext $local_ext_length $actual_file_name_length $file_name_without_ext"
+
+	ret="$file_name_without_ext"_"$line_no$local_file_ext"
 }
 
 ## Script ##
@@ -78,9 +93,7 @@ log "working_dir contents"
 log "`ls`"
 
 
-#r1=`grep -H -R -i "$search_query" | cut -d: -f1 | uniq`
-#r2=`grep -i -r -m $number_of_lines "$search_query" | cut -d: -f1 | uniq`
-
+## TODO : try to list only human readable files
 find ./ -type f -printf '%h/%f\n' > $temp_file 
 n=`wc -l $temp_file | cut -d ' ' -f1`
 
