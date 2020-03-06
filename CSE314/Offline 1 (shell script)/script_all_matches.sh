@@ -1,13 +1,14 @@
 ## Constants ##
 begin="begin"
 end="end"
-temp_file="_temp"
+temp_file="_temp_103"
+temp_all_matched_strings="../_temp_103_search.txt"
 output_dir="../_output_dir_1605103"
 csv_file_name="../_output_csv_1605103.csv"
 csv_header="File Path,Line Number,Line Containing Searched String"
 
 ## Utils ##
-debug=1
+debug=0
 log(){
 	if [ $debug -eq  1 ] ; then
 		echo $1
@@ -108,6 +109,7 @@ log "total files: $n"
 ### TASK 5: Searching from the list of regular files
 csv_text=$csv_header
 count_of_files_matching_criteria=0
+total_matches_in_all_files=0
 for ((i=0; i<$n; i++))
 do
 	file=`head -1  $temp_file`
@@ -135,27 +137,42 @@ do
 		count_of_files_matching_criteria=`expr $count_of_files_matching_criteria + 1`
 
 		unmodified_full_path="$working_dir"$(echo $file | cut -c 2-)
-		
-		format_file_name "$file" "$search_query" "$search_zone"
-		
-		matched_line=`sed "${ret2}q;d" "$file"`
 
-		log "fun returns: ${ret} ${ret2}"
+        format_file_name "$file" "$search_query" "$search_zone"
 
-		new_csv_text=""\"$unmodified_full_path\"",$ret2,"\"$matched_line\"""
+        matches_count_in_this_file=`grep -i -c "$search_query" "$file"`
+
+        total_matches_in_all_files=`expr $total_matches_in_all_files + $matches_count_in_this_file`
+
+        log "Total Matches in file: "$file" $matches_count_in_this_file" 
+
+        grep -i  -n "$search_query" "$file" > "${temp_all_matched_strings}${ret}"
+
+        for ((k=0; k<$matches_count_in_this_file; k++))
+        do
+
+            matched_line=`head -1  "${temp_all_matched_strings}${ret}" | cut -f2 -d':'`
+            matched_line_no=`head -1  "${temp_all_matched_strings}${ret}" | cut -f1 -d':'`   
+
+            sed -i 1d "${temp_all_matched_strings}${ret}"
+  
+            new_csv_text=""\"$unmodified_full_path\"",$matched_line_no,"\"$matched_line\"""
+            csv_text="$csv_text\n"
+		    csv_text="$csv_text$new_csv_text"
 		
-		log "CSV: $new_csv_text"
+		    log "CSV: $new_csv_text"
 		
-		csv_text="$csv_text\n"
-		csv_text="$csv_text$new_csv_text"
-		
-		cp "$file" "$ret"
+		done
+        rm "${temp_all_matched_strings}${ret}"
+        
+        cp "$file" "$ret"
 		mv "$ret" $output_dir
 
 	fi
 done
 
-rm $temp_file
+#rm $temp_file
+echo "Total matches in all files: $total_matches_in_all_files"
 echo "Number of Files Matching Criteria: $count_of_files_matching_criteria"
 
 printf "$csv_text" > "$csv_file_name"
