@@ -140,7 +140,7 @@ do
 		
 		matched_line=`sed "${line_no}q;d" "$file"`
 
-		new_csv_text=""$unmodified_full_path",$ret2,"$matched_line""
+		new_csv_text=""\"$unmodified_full_path\"",$ret2,"\"$matched_line\"""
 		
 		log "CSV: $new_csv_text"
 		
