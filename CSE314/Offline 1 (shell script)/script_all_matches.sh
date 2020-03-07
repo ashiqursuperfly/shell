@@ -8,7 +8,7 @@ csv_file_name="../_output_csv_1605103.csv"
 csv_header="File Path,Line Number,Line Containing Searched String"
 
 ## Utils ##
-debug=0
+debug=1
 log(){
 	if [ $debug -eq  1 ] ; then
 		echo $1
@@ -112,9 +112,19 @@ count_of_files_matching_criteria=0
 total_matches_in_all_files=0
 for ((i=0; i<$n; i++))
 do
+	
 	file=`head -1  $temp_file`
-       
 	sed -i 1d $temp_file
+	
+	file_info=`file "$file"`
+		
+	log "isASCII : $file_info"
+       
+	if grep -q -i -v -e "ASCII" -e "Unicode"<<< "$file_info"; then
+		log "file not in readable "$file""
+		continue
+	fi
+
 
 	if [ $search_zone == $begin ]; then
 		lines=`head -$number_of_lines "$file"`
