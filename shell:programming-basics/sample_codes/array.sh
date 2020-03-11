@@ -23,7 +23,6 @@ done
 
 ## Iterating through an array like a list
 
-
 for i in ${fib[*]} ## using @ will treat every space separated object as new
 do
 	echo $i
@@ -33,6 +32,7 @@ done
 
 
 ## accessing array length
+
 echo ${#fib[*]}
 echo ${#fib[@]}
 

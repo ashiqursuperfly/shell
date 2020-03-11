@@ -1,0 +1,37 @@
+fractals.cpp
+Binary file practice matches
+Awesome/no_no.txt
+Awesome/hot.txt
+Awesome/lab.txt
+Binary file Awesome/txt.zip matches
+Awesome/cool.txt
+Awesome/Oh! Boy!!/smart
+Awesome/Oh! Boy!!/dumb.txt
+Awesome/Oh! Boy!!/Fine/Josh.txt
+Awesome/Oh! Boy!!/Fine/Serum.txt
+chem.txt
+Binary file Shell_Commands.pdf matches
+math.txt
+test.c
+tree.sh
+Binary file Shell_Scripts.pdf matches
+space_remove.sh
+in.txt
+Hello/What.txt
+Hello/name.txt
+Hello/My.txt
+Hello/World/beautiful.txt
+Hello/World/this.txt
+Hello/World/ugly.txt
+find.txt
+Binary file a.out matches
+dd.txt
+myoffline.sh
+sh.html
+x.txt
+Binary file txt_files.zip matches
+out.txt
+Practice.cpp
+phy.txt
+Binary file test matches
+less
